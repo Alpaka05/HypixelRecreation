@@ -88,13 +88,23 @@ public class SkillLoader {
                     return config.description;
                 }
 
+                // Parsed once and reused. getRewards() is hit from hot paths: the action bar loop runs every
+                // 4 ticks and goes getDefense -> SkyBlock level -> getTotalXP -> getReward(level) for every
+                // completed skill level, which re-parsed the whole config each time and dropped TPS to ~1.
+                private volatile SkillReward[] cachedRewards;
+
                 @Override
                 public SkillReward[] getRewards() {
-                    List<SkillReward> rewards = new ArrayList<>();
-                    for (SkillRewardEntry entry : config.rewards) {
-                        rewards.add(parseReward(entry));
+                    SkillReward[] cached = cachedRewards;
+                    if (cached == null) {
+                        List<SkillReward> rewards = new ArrayList<>();
+                        for (SkillRewardEntry entry : config.rewards) {
+                            rewards.add(parseReward(entry));
+                        }
+                        cached = rewards.toArray(new SkillReward[0]);
+                        cachedRewards = cached;
                     }
-                    return rewards.toArray(new SkillReward[0]);
+                    return cached;
                 }
             };
         } catch (Exception e) {
