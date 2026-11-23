@@ -19,7 +19,6 @@ import net.minestom.server.entity.ai.GoalSelector;
 import net.minestom.server.entity.ai.TargetSelector;
 import net.minestom.server.entity.attribute.Attribute;
 import net.minestom.server.entity.damage.Damage;
-import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.network.packet.server.play.EntityHeadLookPacket;
 import net.minestom.server.network.packet.server.play.EntityMetaDataPacket;
@@ -36,7 +35,8 @@ import net.swofty.type.generic.event.HypixelEventHandler;
 import net.swofty.type.generic.utility.MathUtility;
 import net.swofty.type.skyblockgeneric.SkyBlockGenericLoader;
 import net.swofty.type.skyblockgeneric.entity.DroppedItemEntityImpl;
-import net.swofty.type.skyblockgeneric.entity.TextDisplayEntity;
+import net.swofty.type.skyblockgeneric.entity.NameTagStand;
+import net.swofty.type.skyblockgeneric.slayer.SlayerFormat;
 import net.swofty.type.skyblockgeneric.entity.mob.impl.MobPlayerSkin;
 import net.swofty.type.skyblockgeneric.entity.mob.impl.RegionPopulator;
 import net.swofty.type.skyblockgeneric.event.custom.PlayerKilledSkyBlockMobEvent;
@@ -68,7 +68,10 @@ public abstract class SkyBlockMob extends EntityCreature {
     private boolean hasBeenDamaged = false;
 
     private Text customName;
-    private TextDisplayEntity nameDisplayEntity;
+    /** The name tag Hypixel-style: an armour stand with this mob's entity id + 1, see {@link NameTagStand}. */
+    private NameTagStand nameDisplayEntity;
+    /** Further name tag lines above the first one (slayer boss timer, owner line), ids + 2, + 3, ... */
+    private final List<NameTagStand> extraNameTags = new ArrayList<>();
 
     // Fully self-contained vanilla navigator (own A* + own follow loop + vanilla physics). Every mob
     // movement goal paths through this instead of Minestom's Navigator.
@@ -84,7 +87,6 @@ public abstract class SkyBlockMob extends EntityCreature {
     }
 
     private void init() {
-        this.setCustomNameVisible(true);
 
         this.getAttribute(Attribute.MAX_HEALTH)
                 .setBaseValue(getBaseStatistics().getOverall(ItemStatistic.HEALTH).floatValue());
@@ -92,15 +94,14 @@ public abstract class SkyBlockMob extends EntityCreature {
                 .setBaseValue((float) ((getBaseStatistics().getOverall(ItemStatistic.SPEED).floatValue() / 1000) * 2.5));
         this.setHealth(getBaseStatistics().getOverall(ItemStatistic.HEALTH).floatValue());
 
-        this.customName = Text.of("<8>[<7>Lv{}<8>] <c>{}<c> {} <a>{}<f>/<a>{}",
-                getLevel(),
-                Text.parse(getMobTypes().getFirst().getColor() + getMobTypes().getFirst().getSymbol()),
-                getDisplayName(),
-                Math.round(getHealth()),
-                Math.round(getBaseStatistics().getOverall(ItemStatistic.HEALTH).floatValue())
-        );
-        this.set(DataComponents.CUSTOM_NAME, customName.asComponent());
-        nameDisplayEntity = new TextDisplayEntity(customName, meta -> meta.setTranslation(new Pos(0, getNameDisplayHeightOffset(), 0)));
+        this.customName = buildNameTag();
+        // Hypixel mobs carry no name of their own; the tag is the armour stand. Constructed here,
+        // straight after the mob, so it gets the next entity id.
+        this.setCustomNameVisible(false);
+        nameDisplayEntity = new NameTagStand(customName);
+        for (Text line : getExtraNameTagLines()) {
+            extraNameTags.add(new NameTagStand(line));
+        }
 
         setAutoViewable(true);
         setAutoViewEntities(true);
@@ -148,7 +149,10 @@ public abstract class SkyBlockMob extends EntityCreature {
         super.spawn();
         mobs.add(this);
         addPassenger(nameDisplayEntity);
-        updateCustomName(customName);
+        for (NameTagStand stand : extraNameTags) {
+            stand.setInstance(getInstance(), extraNameTagPosition(extraNameTags.indexOf(stand)));
+        }
+        updateCustomName(buildNameTag());
         onSpawn();
     }
 
@@ -205,12 +209,7 @@ public abstract class SkyBlockMob extends EntityCreature {
                     -Math.cos(sourcePoint.getPosition().yaw() * Math.PI / 180));
         }
 
-        updateCustomName("<8>[<7>Lv{}<8>] <c>{} <a>{}<f>/<a>{}",
-                getLevel(),
-                getDisplayName(),
-                Math.round(getHealth()),
-                Math.round(this.getAttributeValue(Attribute.MAX_HEALTH))
-        );
+        updateCustomName(buildNameTag());
 
         return toReturn;
     }
@@ -219,7 +218,7 @@ public abstract class SkyBlockMob extends EntityCreature {
     public void kill() {
         super.kill();
         mobs.remove(this);
-        nameDisplayEntity.remove();
+        removeNameTags();
 
         if (!(getLastDamageSource().getAttacker() instanceof SkyBlockPlayer player)) return;
 
@@ -279,13 +278,69 @@ public abstract class SkyBlockMob extends EntityCreature {
 
     public void updateCustomName(Text newName) {
         this.customName = newName;
-        this.set(DataComponents.CUSTOM_NAME, customName.asComponent());
         if (nameDisplayEntity != null) {
-            nameDisplayEntity.editEntityMeta(TextDisplayMeta.class, meta -> {
-                meta.setTranslation(new Pos(0, getNameDisplayHeightOffset(), 0));
-                meta.setText(newName.asComponent());
-            });
+            nameDisplayEntity.setText(newName);
         }
+    }
+
+    /**
+     * The name tag, in Hypixel's form {@code [Lv70] ♨ Mutated Blaze 2,000/2,000❤}. Mods match it
+     * with patterns like {@code \[Lv\d+] (?<mobType>[symbols]+)? Mutated Blaze (?<min>.+)/(?<max>.+)❤}.
+     */
+    public Text buildNameTag() {
+        double max = getBaseStatistics().getOverall(ItemStatistic.HEALTH);
+        if (getAttribute(Attribute.MAX_HEALTH) != null) {
+            max = getAttributeValue(Attribute.MAX_HEALTH);
+        }
+        StringBuilder symbols = new StringBuilder();
+        for (MobType type : getMobTypes()) {
+            symbols.append(type.getColor()).append(type.getSymbol());
+        }
+        return Text.of("<8>[<7>Lv{}<8>] {} <c>{} <a>{}<f>/<a>{}<c>❤",
+                getLevel(),
+                Text.parse(symbols.toString()),
+                getDisplayName(),
+                healthText(getHealth()),
+                healthText(max));
+    }
+
+    private static String healthText(double health) {
+        // Hypixel writes ordinary mob health in full with commas, and abbreviates the big ones.
+        return health >= 1_000_000 ? SlayerFormat.health(health) : SlayerFormat.commas(Math.max(0, Math.round(health)));
+    }
+
+    /** Lines stacked above the name tag, bottom to top. Called during construction; see {@link NameTagStand}. */
+    protected List<Text> getExtraNameTagLines() {
+        return List.of();
+    }
+
+    protected void setExtraNameTagLine(int index, Text text) {
+        if (index < extraNameTags.size()) {
+            extraNameTags.get(index).setText(text);
+        }
+    }
+
+    private Pos extraNameTagPosition(int index) {
+        return getPosition().add(0, getBoundingBox().height() + 0.3 + index * 0.3, 0);
+    }
+
+    private void removeNameTags() {
+        if (nameDisplayEntity != null) {
+            nameDisplayEntity.remove();
+        }
+        extraNameTags.forEach(NameTagStand::remove);
+    }
+
+    /** Removes the mob without a kill: no drops, no XP, no kill events. */
+    public void despawnQuietly() {
+        remove();
+    }
+
+    @Override
+    public void remove() {
+        mobs.remove(this);
+        removeNameTags();
+        super.remove();
     }
 
     public void updateCustomName(String markup, Object... arguments) {
@@ -344,6 +399,14 @@ public abstract class SkyBlockMob extends EntityCreature {
 
         // Drive our own vanilla navigator's path-follow loop.
         this.vanillaNavigator.tick();
+
+        for (int i = 0; i < extraNameTags.size(); i++) {
+            NameTagStand stand = extraNameTags.get(i);
+            Pos target = extraNameTagPosition(i);
+            if (stand.getInstance() == instance && stand.getPosition().distanceSquared(target) > 0.0025) {
+                stand.teleport(target);
+            }
+        }
 
         try {
             super.tick(time);

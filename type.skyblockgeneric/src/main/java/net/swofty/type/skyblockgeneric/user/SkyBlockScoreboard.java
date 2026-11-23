@@ -175,6 +175,11 @@ public class SkyBlockScoreboard {
                     }
                 }
 
+                TextBody.Section slayer = body.section("slayer");
+                boolean slayerShown = !electionRoom && !darkAuction
+                    && net.swofty.type.skyblockgeneric.slayer.SlayerService.appendSidebar(player, slayer);
+                slayer.when(() -> slayerShown);
+
                 body.section("footer").line(BLANK).line(Text.key("scoreboard.common.footer"));
 
                 scoreboard.update(player, Text.of("  {}", getSidebarName(skyblockName, false, l)), body);

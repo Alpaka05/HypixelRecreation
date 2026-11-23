@@ -39,7 +39,7 @@ public class NPCMaddoxTheSlayer extends HypixelNPC {
 
     @Override
     public void onClick(NPCInteractEvent e) {
-        e.player().notImplemented();
+        e.player().openView(new net.swofty.type.skyblockgeneric.gui.inventories.slayer.GUISlayer());
     }
 
 }

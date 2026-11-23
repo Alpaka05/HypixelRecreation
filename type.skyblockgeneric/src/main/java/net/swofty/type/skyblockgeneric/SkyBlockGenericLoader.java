@@ -359,6 +359,7 @@ public record SkyBlockGenericLoader(HypixelTypeLoader typeLoader) {
 
         // Start repeaters
         SkyBlockScoreboard.start();
+        net.swofty.type.skyblockgeneric.slayer.SlayerService.start();
         StashReminder.start(MinecraftServer.getSchedulerManager());
         PlayerHolograms.updateAll(MinecraftServer.getSchedulerManager());
 

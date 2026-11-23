@@ -2362,6 +2362,8 @@ public enum ItemType {
 
   MACHINE_GUN_BOW(Material.BOW, Rarity.RARE),
 
+  MADDOX_BATPHONE(Material.PLAYER_HEAD, Rarity.UNCOMMON),
+
   MAGENTA_BANNER(Material.MAGENTA_BANNER, Rarity.COMMON),
 
   MAGENTA_BED(Material.MAGENTA_BED, Rarity.COMMON),

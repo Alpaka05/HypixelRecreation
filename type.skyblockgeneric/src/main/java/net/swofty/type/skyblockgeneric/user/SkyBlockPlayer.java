@@ -982,6 +982,7 @@ public class SkyBlockPlayer extends HypixelPlayer {
     @Override
     public void kill() {
         setHealth(getMaxHealth());
+        net.swofty.type.skyblockgeneric.slayer.SlayerService.handlePlayerDeath(this);
         sendTo(HypixelConst.getTypeLoader().getType());
 
         DeathMessageCreator creator = new DeathMessageCreator(this.lastDamage);

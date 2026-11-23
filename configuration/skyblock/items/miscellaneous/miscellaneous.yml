@@ -16,6 +16,13 @@ items:
       - id: LORE_UPDATE
         handler_id: SKYBLOCK_MENU_LORE
         is_absolute: true
+  - id: MADDOX_BATPHONE
+    material: player_head
+    name: "Maddox Batphone"
+    rarity: UNCOMMON
+    components:
+      - id: INTERACTABLE
+        handler_id: MADDOX_BATPHONE_INTERACT
   - id: AGARIMOO_TONGUE
     rarity: RARE
     material: MUTTON

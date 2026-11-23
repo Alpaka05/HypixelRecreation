@@ -26,4 +26,14 @@ public record SlayerDefinition(
         }
         return level;
     }
+
+    /** Total slayer XP needed for {@code level}, or null past the last level. */
+    public Integer xpForLevel(int level) {
+        for (SlayerLevelReward reward : levels) {
+            if (reward.level() == level) {
+                return reward.requiredXp();
+            }
+        }
+        return null;
+    }
 }

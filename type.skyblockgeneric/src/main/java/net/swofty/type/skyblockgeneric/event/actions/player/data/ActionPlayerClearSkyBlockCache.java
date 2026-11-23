@@ -21,6 +21,7 @@ public class ActionPlayerClearSkyBlockCache implements HypixelEventClass {
 
         // remove from caches
         SkyBlockScoreboard.removeCache(player);
+        net.swofty.type.skyblockgeneric.slayer.SlayerService.handleDisconnect(player);
         player.getPetData().updatePetEntityImpl(null);
         PlayerItemOrigin.clearCache(player.getUuid());
         ActionPlayerStrayTooFar.startedStray.remove(player.getUuid());

@@ -25,6 +25,14 @@ public class InteractableRegistry {
                     return false;
                 })
         ).build());
+        // Hypixel's Maddox Batphone: rings Maddox and opens his Slayer menu from anywhere. This is
+        // how slayer quests are started away from the Hub, the Crimson Isle above all.
+        register("MADDOX_BATPHONE_INTERACT", InteractableItemConfig.builder().rightClickHandler(
+                ((player, skyBlockItem) -> {
+                    player.sendMessage("<e>✆ Ring... Ring... Ring...");
+                    player.openView(new net.swofty.type.skyblockgeneric.gui.inventories.slayer.GUISlayer());
+                })
+        ).build());
         register("MOVE_JERRY_INTERACT", InteractableItemConfig.builder().rightClickHandler(
                 ((player, skyBlockItem) -> {
                     if (!HypixelConst.isIslandServer()) {
