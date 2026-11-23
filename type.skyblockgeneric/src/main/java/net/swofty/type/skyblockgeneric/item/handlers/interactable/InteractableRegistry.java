@@ -28,10 +28,7 @@ public class InteractableRegistry {
         // Hypixel's Maddox Batphone: rings Maddox and opens his Slayer menu from anywhere. This is
         // how slayer quests are started away from the Hub, the Crimson Isle above all.
         register("MADDOX_BATPHONE_INTERACT", InteractableItemConfig.builder().rightClickHandler(
-                ((player, skyBlockItem) -> {
-                    player.sendMessage("<e>✆ Ring... Ring... Ring...");
-                    player.openView(new net.swofty.type.skyblockgeneric.gui.inventories.slayer.GUISlayer());
-                })
+                ((player, skyBlockItem) -> net.swofty.type.skyblockgeneric.slayer.MaddoxPhone.call(player))
         ).build());
         register("BLAZE_DAGGER_ATTUNE", InteractableItemConfig.builder().rightClickHandler(
                 net.swofty.type.skyblockgeneric.slayer.blaze.BlazeDaggers::attune
