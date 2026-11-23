@@ -27,6 +27,8 @@ public final class SlayerBossMob extends SkyBlockMob {
     private final UUID ownerUuid;
     private final String ownerName;
     private long lastTimerUpdate;
+    /** While frozen (Inferno Demonlord mid-split) the boss neither moves nor attacks. */
+    private volatile boolean frozen;
     private final SlayerBossAbility ability;
     private final List<Task> abilityTasks = new java.util.concurrent.CopyOnWriteArrayList<>();
 
@@ -69,12 +71,44 @@ public final class SlayerBossMob extends SkyBlockMob {
             SlayerFormat.health(live.tier().bossHealth()));
     }
 
-    /** Above the name, bottom to top: the time left, then whose boss it is (entity ids + 2 and + 3). */
+    /**
+     * Above the name, bottom to top: the time left, whose boss it is (entity ids + 2 and + 3; SkyHanni
+     * reads the owner from the name stand's id + 2), and for the Inferno Demonlord its Hellion Shield
+     * line ({@code ASHEN ♨8}, {@code IMMUNE}) on top.
+     */
     @Override
     protected List<Text> getExtraNameTagLines() {
-        return List.of(
-            Text.of("<c>{}", SlayerFormat.timer(live().tier().timeLimitSeconds() * 1000L)),
-            Text.of("<8>{}'s <c><l>SLAYER BOSS", getOwnerName()));
+        Text timer = Text.of("<c>{}", SlayerFormat.timer(live().tier().timeLimitSeconds() * 1000L));
+        Text owner = Text.of("<8>{}'s <c><l>SLAYER BOSS", getOwnerName());
+        if (live().type() == net.swofty.type.skyblockgeneric.slayer.SlayerType.INFERNO_DEMONLORD) {
+            return List.of(timer, owner, Text.literal(""));
+        }
+        return List.of(timer, owner);
+    }
+
+    /** The Hellion Shield / IMMUNE line of an Inferno Demonlord. */
+    public void setShieldLine(Text text) {
+        setExtraNameTagLine(2, text);
+    }
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    /** Stops the boss in place (no AI, no pathing), e.g. while its demons fight. */
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+        if (frozen) {
+            getVanillaNavigator().stop();
+            setVelocity(net.minestom.server.coordinate.Vec.ZERO);
+        }
+    }
+
+    @Override
+    public void aiTick(long time) {
+        if (!frozen) {
+            super.aiTick(time);
+        }
     }
 
     @Override
@@ -91,6 +125,7 @@ public final class SlayerBossMob extends SkyBlockMob {
 
     /** Takes the boss away without a kill (quest failed, cancelled, owner gone). */
     public void despawnBoss() {
+        ability.onDeath(this);
         abilityTasks.forEach(Task::cancel);
         abilityTasks.clear();
         despawnQuietly();

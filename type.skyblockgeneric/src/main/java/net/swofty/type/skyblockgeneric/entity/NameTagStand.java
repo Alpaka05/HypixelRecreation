@@ -31,7 +31,10 @@ public class NameTagStand extends Entity {
         setText(text);
     }
 
+    /** An empty text hides the line instead of drawing an empty plate. */
     public void setText(Text text) {
+        String plain = text.plain();
+        setCustomNameVisible(plain != null && !plain.isBlank());
         set(DataComponents.CUSTOM_NAME, text.asComponent());
     }
 }
