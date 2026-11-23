@@ -27,7 +27,10 @@ public enum TravelScrollIslands {
 			(unused) -> "An island that gets progressively deeper and contains 6 layers of dangerous mobs and new resources.", ServerType.SKYBLOCK_DEEP_CAVERNS, SkillCategories.MINING, 2),
 	DWARVEN_MINES("dwarven", "<a>Dwarven Mines <7>- <b>Spawn",
 			"6b20b23c1aa2be0270f016b4c90d6ee6b8330a17cfef87869d6ad60b2ffbf3b5",
-			(unused) -> "An island that gets progressively deeper and contains 6 layers of dangerous mobs and new resources.", ServerType.SKYBLOCK_DWARVEN_MINES, SkillCategories.MINING, 2)
+			(unused) -> "An island that gets progressively deeper and contains 6 layers of dangerous mobs and new resources.", ServerType.SKYBLOCK_DWARVEN_MINES, SkillCategories.MINING, 2),
+	CRIMSON_ISLE("crimson", "<c>Crimson Isle <7>- <b>Spawn",
+			"c3687e25c632bce8aa61e0d64c24e694c3eea629ea944f4cf30dcfb4fbce071",
+			(unused) -> "A volcanic island ruled by Barbarians and Mages, home of the Inferno Demonlord.", ServerType.SKYBLOCK_CRIMSON_ISLE)
 	;
 
     private final String internalName;

@@ -35,12 +35,30 @@ public class WarpCommand extends HypixelCommand {
             final String warp = context.get(warpArgument);
             SkyBlockPlayer player = (SkyBlockPlayer) sender;
 
+            // Hypixel's /warp smoldering (Travel Scroll to the Smoldering Tomb, Blaze Slayer 4).
+            // Open to everyone here: this is a test server and the walk is 600 blocks.
+            if (warp.equalsIgnoreCase("smoldering")) {
+                net.minestom.server.coordinate.Pos tomb = new net.minestom.server.coordinate.Pos(-291.5, 124, -998.5, 180, 0);
+                if (HypixelConst.getTypeLoader().getType() == ServerType.SKYBLOCK_CRIMSON_ISLE) {
+                    player.teleport(tomb);
+                    player.sendMessage("<7>You have been warped to <c>Smoldering Tomb<7>!");
+                } else {
+                    player.asProxyPlayer().transferToWithIndication(ServerType.SKYBLOCK_CRIMSON_ISLE).thenRun(() -> {
+                        player.asProxyPlayer().sendMessage("<7>You have been warped to <c>Smoldering Tomb<7>!");
+                        player.asProxyPlayer().teleport(tomb);
+                    });
+                }
+                return;
+            }
+
             TravelScrollIslands island = TravelScrollIslands.getFromInternalName(warp);
             if (island != null) {
                 List<String> unlockedIslands = player.getSkyblockDataHandler()
                         .get(SkyBlockDataHandler.Data.VISITED_ISLANDS, DatapointStringList.class)
                         .getValue();
-                if (unlockedIslands.contains(warp)) {
+                // Staff may warp anywhere, to test islands on a fresh profile.
+                boolean staff = player.getRank().isEqualOrHigherThan(Rank.STAFF);
+                if (unlockedIslands.contains(warp) || staff) {
                     player.asProxyPlayer().transferToWithIndication(island.getServerType()).thenRun(() -> {
                         player.asProxyPlayer().sendMessage("<7>You have been warped to {}<7>!", island.getDescriptiveName());
                     });
