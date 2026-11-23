@@ -145,7 +145,9 @@ public final class SlayerService {
             return;
         }
 
-        int gainedXp = Math.max(1, (int) mob.getOtherLoot().getSkillXPAmount());
+        // One kill never fills more than 75 % of a quest (Hypixel, patch 0.20.9).
+        int gainedXp = (int) Math.min(mob.getOtherLoot().getSkillXPAmount(), tierDefinition.requiredCombatXp() * 0.75D);
+        gainedXp = Math.max(1, gainedXp);
         SlayerQuest progressedQuest = quest.addCombatXp(gainedXp, tierDefinition.requiredCombatXp());
         if (progressedQuest.combatXp() >= tierDefinition.requiredCombatXp()) {
             SlayerBossMob boss = spawnBoss(player, definition, tierDefinition, mob.getPosition());

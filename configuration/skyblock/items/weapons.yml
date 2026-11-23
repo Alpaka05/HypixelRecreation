@@ -573,6 +573,8 @@ items:
       critical_damage: 20
       bonus_attack_speed: 10
     components:
+      - id: INTERACTABLE
+        handler_id: BLAZE_DAGGER_ATTUNE
       - id: STANDARD_ITEM
         standard_item_type: SWORD
       - id: ITEM_REQUIREMENTS
@@ -597,6 +599,8 @@ items:
       critical_damage: 20
       bonus_attack_speed: 10
     components:
+      - id: INTERACTABLE
+        handler_id: BLAZE_DAGGER_ATTUNE
       - id: STANDARD_ITEM
         standard_item_type: SWORD
       - id: ITEM_REQUIREMENTS
@@ -1026,6 +1030,8 @@ items:
       strength: 45
       critical_damage: 15
     components:
+      - id: INTERACTABLE
+        handler_id: BLAZE_DAGGER_ATTUNE
       - id: STANDARD_ITEM
         standard_item_type: SWORD
       - id: ITEM_REQUIREMENTS
@@ -1356,6 +1362,8 @@ items:
       critical_chance: 10
       bonus_attack_speed: 20
     components:
+      - id: INTERACTABLE
+        handler_id: BLAZE_DAGGER_ATTUNE
       - id: STANDARD_ITEM
         standard_item_type: SWORD
       - id: ITEM_REQUIREMENTS
@@ -1381,6 +1389,8 @@ items:
       critical_chance: 10
       bonus_attack_speed: 20
     components:
+      - id: INTERACTABLE
+        handler_id: BLAZE_DAGGER_ATTUNE
       - id: STANDARD_ITEM
         standard_item_type: SWORD
       - id: ITEM_REQUIREMENTS
@@ -1728,6 +1738,8 @@ items:
       strength: 45
       critical_damage: 15
     components:
+      - id: INTERACTABLE
+        handler_id: BLAZE_DAGGER_ATTUNE
       - id: STANDARD_ITEM
         standard_item_type: SWORD
       - id: ITEM_REQUIREMENTS

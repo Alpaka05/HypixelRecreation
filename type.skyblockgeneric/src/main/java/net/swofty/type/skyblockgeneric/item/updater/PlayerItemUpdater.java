@@ -139,6 +139,10 @@ public class PlayerItemUpdater {
         if (item.hasComponent(ItemModelComponent.class)) {
             toReturn.set(DataComponents.ITEM_MODEL, item.getComponent(ItemModelComponent.class).getItemModel());
         }
+        // Blaze daggers look like a golden / diamond sword on their second attunement, as on Hypixel.
+        if (net.swofty.type.skyblockgeneric.slayer.blaze.BlazeDaggers.onSecondMode(item)) {
+            toReturn.set(DataComponents.ITEM_MODEL, net.swofty.type.skyblockgeneric.slayer.blaze.BlazeDaggers.secondModeModel(item));
+        }
 
         Rarity rarity = handler.isRecombobulated()
                 ? handler.getRarity().upgrade()

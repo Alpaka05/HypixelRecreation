@@ -305,8 +305,9 @@ public abstract class SkyBlockMob extends EntityCreature {
     }
 
     private static String healthText(double health) {
-        // Hypixel writes ordinary mob health in full with commas, and abbreviates the big ones.
-        return health >= 1_000_000 ? SlayerFormat.health(health) : SlayerFormat.commas(Math.max(0, Math.round(health)));
+        // Hypixel writes small health figures in full with commas ("4,250/5,000") and big ones
+        // abbreviated ("250k/250k", "2M/2M").
+        return health >= 100_000 ? SlayerFormat.health(health) : SlayerFormat.commas(Math.max(0, Math.round(health)));
     }
 
     /** Lines stacked above the name tag, bottom to top. Called during construction; see {@link NameTagStand}. */

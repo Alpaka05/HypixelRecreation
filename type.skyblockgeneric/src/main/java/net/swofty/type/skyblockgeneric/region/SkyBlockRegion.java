@@ -68,25 +68,24 @@ public class SkyBlockRegion {
      * @see SkyBlockMob#setInstance(Instance, Pos)
      */
     public @Nullable Pos getRandomPositionForEntity(Instance instance) {
-        // Checks if there is a 2 block gap up the Y level and if the block below is solid
-
-        int tries = 0;
-        while (true) {
-            tries++;
+        // A random spot with two blocks of air on top of something solid. Tall regions (multi-floor
+        // fortresses, caves) rarely hit a floor at a random height, so each try also walks down from
+        // its random height to the first floor beneath it.
+        int minY = Math.min(firstLocation.blockY(), secondLocation.blockY());
+        for (int tries = 0; tries < 8; tries++) {
             Pos randomPosition = getRandomPosition();
-            Pos blockAbove = randomPosition.add(0, 1, 0);
-            Pos blockBelow = randomPosition.sub(0, 1, 0);
-
-            if (tries > 5) {
-                return null;
+            if (!instance.isChunkLoaded(randomPosition)) {
+                continue;
             }
-
-            if (instance.isChunkLoaded(randomPosition)
-                && instance.getBlock(randomPosition).air()
-                && instance.getBlock(blockAbove).air()
-                && !instance.getBlock(blockBelow).air())
-                return randomPosition;
+            for (Pos at = randomPosition; at.blockY() > minY; at = at.sub(0, 1, 0)) {
+                if (instance.getBlock(at).air()
+                    && instance.getBlock(at.add(0, 1, 0)).air()
+                    && instance.getBlock(at.sub(0, 1, 0)).isSolid()) {
+                    return new Pos(at.blockX() + 0.5, at.blockY(), at.blockZ() + 0.5);
+                }
+            }
         }
+        return null;
     }
 
     public void delete() {

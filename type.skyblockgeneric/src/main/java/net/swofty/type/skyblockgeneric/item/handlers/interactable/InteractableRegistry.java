@@ -33,6 +33,9 @@ public class InteractableRegistry {
                     player.openView(new net.swofty.type.skyblockgeneric.gui.inventories.slayer.GUISlayer());
                 })
         ).build());
+        register("BLAZE_DAGGER_ATTUNE", InteractableItemConfig.builder().rightClickHandler(
+                net.swofty.type.skyblockgeneric.slayer.blaze.BlazeDaggers::attune
+        ).build());
         register("MOVE_JERRY_INTERACT", InteractableItemConfig.builder().rightClickHandler(
                 ((player, skyBlockItem) -> {
                     if (!HypixelConst.isIslandServer()) {

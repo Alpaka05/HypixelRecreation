@@ -86,6 +86,7 @@ public class ItemLore {
 		fillCustomLore(lore);
 		fillConfigLore(lore);
 		fillAbilities(lore);
+		fillBlazeDagger(lore);
 		fillFullSetBonus(lore);
 		fillRecipes(lore);
 		fillReforgeable(lore);
@@ -351,6 +352,27 @@ public class ItemLore {
 
 		TextBody.Section section = lore.section(LoreText.Sections.CONFIG_LORE);
 		configLore.forEach(line -> section.line(LoreText.gray(line)));
+	}
+
+	/**
+	 * The Blaze slayer daggers' Attunement ability and current mode. SkyHanni reads the
+	 * {@code Attuned: Ashen} line from the inventory to know a dagger's mode.
+	 */
+	private static void fillBlazeDagger(LoreText lore) {
+		SkyBlockItem item = lore.item();
+		net.swofty.type.skyblockgeneric.slayer.blaze.Attunement current =
+				net.swofty.type.skyblockgeneric.slayer.blaze.BlazeDaggers.attunementOf(item);
+		if (current == null) return;
+		net.swofty.type.skyblockgeneric.slayer.blaze.Attunement[] modes =
+				net.swofty.type.skyblockgeneric.slayer.blaze.BlazeDaggers.modesOf(item);
+
+		TextBody.Section section = lore.section(LoreText.Sections.ABILITIES).child("blaze_attunement").separated();
+		section.line(Text.of("<6>Ability: Attunement  <e><l>RIGHT CLICK"));
+		Text.of("<7><wrap:40>Swap between " + modes[0].colourTag() + "{}<7> and " + modes[1].colourTag()
+						+ "{}<7> mode in order to attack through Hellion Shields.</wrap>",
+				modes[0].cleanName(), modes[1].cleanName()).lines().forEach(section::line);
+		section.line(Text.literal(" "));
+		section.line(Text.of("<7>Attuned: " + current.colourTag() + "{}", current.cleanName()));
 	}
 
 	private static void fillAbilities(LoreText lore) {

@@ -54,16 +54,19 @@ public final class SlayerBossMob extends SkyBlockMob {
     }
 
     /**
-     * Hypixel's boss tag: {@code ☠ Inferno Demonlord I 2.5M❤}. AlpakaAddons and SkyHanni find a
-     * boss by the ☠ and the tier straight after the boss name.
+     * Hypixel's boss tag: {@code [Lv436] ☠ Inferno Demonlord I 2.5M/2.5M❤}. SkyHanni's slayer name
+     * filter, Skyblocker and AlpakaAddons find a boss by the ☠, the boss name and the tier after it;
+     * Skyblocker treats a tag ending in {@code  0❤} as a dead boss.
      */
     @Override
     public Text buildNameTag() {
         SlayerBossProfile live = live();
-        return Text.of("<c>☠ <b>{} " + live.tier().tier().colourTag() + "{} <a>{}<c>❤",
+        return Text.of("<8>[<7>Lv{}<8>] <c>☠ <b>{} " + live.tier().tier().colourTag() + "{} <a>{}<f>/<a>{}<c>❤",
+            live.tier().bossLevel(),
             live.type().displayName(),
             live.tier().tier().numeral(),
-            SlayerFormat.health(getHealth()));
+            SlayerFormat.health(getHealth()),
+            SlayerFormat.health(live.tier().bossHealth()));
     }
 
     /** Above the name, bottom to top: the time left, then whose boss it is (entity ids + 2 and + 3). */

@@ -99,6 +99,10 @@ public class NonPlayerItemUpdater {
         if (item.hasComponent(ItemModelComponent.class)) {
             stack.set(DataComponents.ITEM_MODEL, item.getComponent(ItemModelComponent.class).getItemModel());
         }
+        // Blaze daggers look like a golden / diamond sword on their second attunement, as on Hypixel.
+        if (net.swofty.type.skyblockgeneric.slayer.blaze.BlazeDaggers.onSecondMode(item)) {
+            stack.set(DataComponents.ITEM_MODEL, net.swofty.type.skyblockgeneric.slayer.blaze.BlazeDaggers.secondModeModel(item));
+        }
 
         ItemAttributeRarity rarityAttribute = (ItemAttributeRarity) item.getAttribute("rarity");
         stack.set(DataComponents.TOOLTIP_STYLE, rarityAttribute.value.getTooltipStyle());
