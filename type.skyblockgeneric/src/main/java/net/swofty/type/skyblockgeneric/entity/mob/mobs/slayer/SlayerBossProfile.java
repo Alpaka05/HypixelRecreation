@@ -47,7 +47,8 @@ public record SlayerBossProfile(
         return new SkyBlockLootTable() {
             @Override
             public List<LootRecord> getLootTable() {
-                return List.of(new LootRecord(item.get(), tier.tokenDrops(), 100));
+                return List.of(new LootRecord(item.get(),
+                    makeAmountBetween(tier.tokenDrops(), Math.max(tier.tokenDrops(), tier.tokenDropsMax())), 100));
             }
 
             @Override

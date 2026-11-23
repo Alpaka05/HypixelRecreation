@@ -97,7 +97,8 @@ public final class SlayerRegistry {
                 doubleValue(entry, "bossSpeed", 100D),
                 intValue(entry, "tokenDrops", 0),
                 optionalItem(entry.get("tokenItem")),
-                intValue(entry, "timeLimitSeconds", 180)
+                intValue(entry, "timeLimitSeconds", 180),
+                intValue(entry, "tokenDropsMax", intValue(entry, "tokenDrops", 0))
             ));
         }
         return result;

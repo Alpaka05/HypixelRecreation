@@ -107,7 +107,7 @@ slayers:
       - { level: 8, requiredXp: 400000, title: Demon Eater }
       - { level: 9, requiredXp: 1000000, title: Gabagool King }
     tiers:
-      - { tier: I, cost: 10000, requiredCombatXp: 6000, slayerXp: 5, bossLevel: 436, bossHealth: 2500000, bossDamage: 100, bossSpeed: 130, tokenItem: DERELICT_ASHE, tokenDrops: 1 }
-      - { tier: II, cost: 25000, requiredCombatXp: 10000, slayerXp: 25, bossLevel: 551, bossHealth: 10000000, bossDamage: 100, bossSpeed: 135, tokenItem: DERELICT_ASHE, tokenDrops: 2 }
-      - { tier: III, cost: 60000, requiredCombatXp: 14000, slayerXp: 100, bossLevel: 695, bossHealth: 45000000, bossDamage: 100, bossSpeed: 145, tokenItem: DERELICT_ASHE, tokenDrops: 3 }
-      - { tier: IV, cost: 150000, requiredCombatXp: 28000, slayerXp: 500, bossLevel: 825, bossHealth: 150000000, bossDamage: 100, bossSpeed: 150, tokenItem: DERELICT_ASHE, tokenDrops: 4 }
+      - { tier: I, cost: 10000, requiredCombatXp: 6000, slayerXp: 5, bossLevel: 436, bossHealth: 2500000, bossDamage: 100, bossSpeed: 130, tokenItem: DERELICT_ASHE, tokenDrops: 8, tokenDropsMax: 16 }
+      - { tier: II, cost: 25000, requiredCombatXp: 10000, slayerXp: 25, bossLevel: 551, bossHealth: 10000000, bossDamage: 100, bossSpeed: 135, tokenItem: DERELICT_ASHE, tokenDrops: 16, tokenDropsMax: 32 }
+      - { tier: III, cost: 60000, requiredCombatXp: 14000, slayerXp: 100, bossLevel: 695, bossHealth: 45000000, bossDamage: 100, bossSpeed: 145, tokenItem: DERELICT_ASHE, tokenDrops: 32, tokenDropsMax: 64 }
+      - { tier: IV, cost: 150000, requiredCombatXp: 28000, slayerXp: 500, bossLevel: 825, bossHealth: 150000000, bossDamage: 100, bossSpeed: 150, tokenItem: DERELICT_ASHE, tokenDrops: 64, tokenDropsMax: 96 }

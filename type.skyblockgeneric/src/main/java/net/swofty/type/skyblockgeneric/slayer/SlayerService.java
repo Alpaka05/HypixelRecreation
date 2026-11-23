@@ -22,6 +22,7 @@ import net.swofty.type.skyblockgeneric.elections.SkyBlockMayor;
 import net.swofty.type.skyblockgeneric.entity.mob.SkyBlockMob;
 import net.swofty.type.skyblockgeneric.entity.mob.mobs.slayer.SlayerBossMob;
 import net.swofty.type.skyblockgeneric.entity.mob.mobs.slayer.SlayerBossProfile;
+import net.swofty.type.skyblockgeneric.entity.mob.mobs.slayer.SlayerMiniBossMob;
 import net.swofty.type.skyblockgeneric.user.SkyBlockPlayer;
 import org.jetbrains.annotations.Nullable;
 
@@ -154,10 +155,38 @@ public final class SlayerService {
             if (boss != null) {
                 progressedQuest = progressedQuest.markBossSpawned(boss.getUuid());
             }
+        } else if (!(mob instanceof SlayerMiniBossMob)) {
+            maybeSpawnMiniBoss(player, quest, mob.getPosition());
         }
 
         data.setActiveQuest(progressedQuest);
         save(player, data);
+    }
+
+    /**
+     * Inferno III+ grinding now and then brings a mini-boss: Flare Demon from III, Kindleheart and
+     * Burningsoul Demon on IV. Hypixel's odds are not published; these are rough.
+     */
+    private static void maybeSpawnMiniBoss(SkyBlockPlayer player, SlayerQuest quest, Pos at) {
+        if (quest.type() != SlayerType.INFERNO_DEMONLORD || player.getInstance() == null) {
+            return;
+        }
+        double roll = Math.random();
+        SlayerMiniBossMob.Kind kind = null;
+        if (quest.tier().number() >= 4 && roll < 0.015) {
+            kind = SlayerMiniBossMob.Kind.BURNINGSOUL_DEMON;
+        } else if (quest.tier().number() >= 4 && roll < 0.045) {
+            kind = SlayerMiniBossMob.Kind.KINDLEHEART_DEMON;
+        } else if (quest.tier().number() >= 3 && roll < 0.08) {
+            kind = SlayerMiniBossMob.Kind.FLARE_DEMON;
+        }
+        if (kind == null) {
+            return;
+        }
+        SlayerMiniBossMob miniBoss = SlayerMiniBossMob.create(player.getUuid(), kind);
+        miniBoss.setInstance(player.getInstance(), at);
+        player.sendMessage("<c><l>SLAYER MINI-BOSS </l><c>{} <c>has spawned!", kind.displayName());
+        player.playSound(Sound.sound(Key.key("entity.wither.ambient"), Sound.Source.HOSTILE, 1f, 1.2f));
     }
 
     /** Called from {@link SkyBlockPlayer#kill()}: dying with a boss up fails the quest, as on Hypixel. */

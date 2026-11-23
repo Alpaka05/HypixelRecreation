@@ -14,7 +14,8 @@ public record SlayerTierDefinition(
     double bossSpeed,
     int tokenDrops,
     Optional<ItemType> tokenItem,
-    int timeLimitSeconds
+    int timeLimitSeconds,
+    int tokenDropsMax
 ) {
     public String displayName(SlayerType type) {
         return type.displayName() + " " + tier.numeral();
