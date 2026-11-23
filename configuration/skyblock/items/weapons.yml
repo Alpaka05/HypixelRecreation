@@ -565,6 +565,7 @@ items:
         standard_item_type: BOW
   - id: BURSTFIRE_DAGGER
     material: STONE_SWORD
+    name: "Kindlebane Dagger"
     rarity: EPIC
     default_statistics:
       damage: 130
@@ -588,6 +589,7 @@ items:
         item_model: hypixel_skyblock:item/slayer/blaze/swords/kindlebane_dagger
   - id: BURSTMAW_DAGGER
     material: IRON_SWORD
+    name: "Mawdredge Dagger"
     rarity: EPIC
     default_statistics:
       damage: 130
@@ -1017,6 +1019,7 @@ items:
         item_model: hypixel_skyblock:item/uncategorized/fel_sword
   - id: FIREDUST_DAGGER
     material: STONE_SWORD
+    name: "Firedust Dagger"
     rarity: RARE
     default_statistics:
       damage: 90
@@ -1344,6 +1347,7 @@ items:
         item_model: hypixel_skyblock:item/broken/broken_wand
   - id: HEARTFIRE_DAGGER
     material: STONE_SWORD
+    name: "Pyrochaos Dagger"
     rarity: LEGENDARY
     default_statistics:
       damage: 160
@@ -1368,6 +1372,7 @@ items:
         item_model: hypixel_skyblock:item/slayer/blaze/swords/pyrochaos_dagger
   - id: HEARTMAW_DAGGER
     material: IRON_SWORD
+    name: "Deathripper Dagger"
     rarity: LEGENDARY
     default_statistics:
       damage: 160
@@ -1716,6 +1721,7 @@ items:
         item_model: hypixel_skyblock:item/uncategorized/magma_bow
   - id: MAWDUST_DAGGER
     material: IRON_SWORD
+    name: "Twilight Dagger"
     rarity: RARE
     default_statistics:
       damage: 90

@@ -80,7 +80,9 @@ public final class SlayerService {
             return StartResult.missingTier(type, tier);
         }
 
-        if (definition.unlockRequirement().isPresent()) {
+        // Staff skip the unlock chain so a single slayer can be tested on a fresh profile.
+        boolean staff = player.getRank().isEqualOrHigherThan(net.swofty.type.generic.user.categories.Rank.STAFF);
+        if (definition.unlockRequirement().isPresent() && !staff) {
             SlayerUnlockRequirement requirement = definition.unlockRequirement().get();
             if (data.progress(requirement.type()).completions(requirement.tier()) <= 0) {
                 return StartResult.locked(requirement);
